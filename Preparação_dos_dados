@@ -74,6 +74,7 @@ sql_sums = []
 for coluna in colunas:
     sql_sum = f"SUM(CASE WHEN {coluna.upper()} = 'NA' THEN 1 ELSE 0 END) AS {coluna.upper()}"
     sql_sums.append(sql_sum)
+-- para transformar de uma lista para um str
 codigo_sql = ",\n".join(sql_sums)
 print(codigo_sql)
 -- para os updates
@@ -81,6 +82,7 @@ sql_updates = []
 for coluna in colunas:
   sql_update = f"UPDATE capes.3 SET {coluna.upper()} = '0' WHERE {coluna.upper()} = 'NA'"
   sql_updates.append(sql_update)
+-- para transformar de uma lista para um str
 codigo_sqlup = ",\n".join(sql_updates)
 print(codigo_sqlup)
 -- para os modify
@@ -88,5 +90,6 @@ sql_modify = []
 for coluna in colunas:
   sql_mods = f"MODIFY {coluna.upper()} INT"
   sql_modify.append(sql_mods)
+-- para transformar de uma lista para um str
 cod_sql_mod = ",\n".join(sql_modify)
 print(cod_sql_mod)
