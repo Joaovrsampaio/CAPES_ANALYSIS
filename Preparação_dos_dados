@@ -4,7 +4,7 @@ Tem duas formar de arrumar isso, a primeira é no excel ou python fazendo esse t
 ou segue com a importação, porém na janela de "mapeamento de tabela" podemos configurar os tipos, saindo de um tipo INT para um VARCHAR, e desse modo o Dbeaver faz a importação sem erros,
 e após fazer a importação no script SQL podemos encontrar onde estão esses erros de tipagem, averiguar qual a melhor solução (nesse caso foi transformar em 0), corrigida a solução,
 após a correções voltar o tipo para INT e seguir fazendo as ánalises
-
+e no final deixarei um código em python para facilitar ao tentar escrever tantas linhas parecidas *\
 -- Foi feita a importação da tabela 3 para o banco de dados Capes
 -- Pedindo um Describe para olhar as informações
 desc capes.3 
@@ -65,3 +65,28 @@ MODIFY DOUTORADO_PLENO INT
 
 -- verificando se tudo ocorreu da melhor forma
 desc capes.3 
+
+
+-- PYTHON
+-- para o codigo do sum
+Colunas = [ nomes das colunas para a modificação] 
+sql_sums = []
+for coluna in colunas:
+    sql_sum = f"SUM(CASE WHEN {coluna.upper()} = 'NA' THEN 1 ELSE 0 END) AS {coluna.upper()}"
+    sql_sums.append(sql_sum)
+codigo_sql = ",\n".join(sql_sums)
+print(codigo_sql)
+-- para os updates
+sql_updates = []
+for coluna in colunas:
+  sql_update = f"UPDATE capes.3 SET {coluna.upper()} = '0' WHERE {coluna.upper()} = 'NA'"
+  sql_updates.append(sql_update)
+codigo_sqlup = ",\n".join(sql_updates)
+print(codigo_sqlup)
+-- para os modify
+sql_modify = []
+for coluna in colunas:
+  sql_mods = f"MODIFY {coluna.upper()} INT"
+  sql_modify.append(sql_mods)
+cod_sql_mod = ",\n".join(sql_modify)
+print(cod_sql_mod)
