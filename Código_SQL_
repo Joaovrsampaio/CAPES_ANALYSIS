@@ -1,0 +1,67 @@
+\*ERRO AO IMPORTAR A TABELA. https://www.kaggle.com/datasets/voltdata/capes-bolsas/data?select=capes_bolsas.csv
+Nessa tabela tem um dado númerico, porém por variávies faltantes e o Dbeaver não lê NA como erro, e sim como str, causando um erro de tipo não permitido naquela tabela,
+Tem duas formar de arrumar isso, a primeira é no excel ou python fazendo esse tratamento e depois importando para o SGBD normalmente,
+ou segue com a importação, porém na janela de "mapeamento de tabela" podemos configurar os tipos, saindo de um tipo INT para um VARCHAR, e desse modo o Dbeaver faz a importação sem erros,
+e após fazer a importação no script SQL podemos encontrar onde estão esses erros de tipagem, averiguar qual a melhor solução (nesse caso foi transformar em 0), corrigida a solução,
+após a correções voltar o tipo para INT e seguir fazendo as ánalises
+
+-- Foi feita a importação da tabela 3 para o banco de dados Capes
+-- Pedindo um Describe para olhar as informações
+desc capes.3 
+
+-- Averiguando onde tem NA dentre as colunas númericas 
+-- claramente que não precisa escrever essas várias linhas, só pedir ajuda para o python para automatizar a escrita dessas várias linhas iguais
+-- Nesse código estamos fazendo uma soma das vezes que aparece NA em cada coluna, e descobrir quais são diferentes de 0
+SELECT
+    COUNT(*) AS total_rows,
+    SUM(CASE WHEN Codigo_IES = 'NA' THEN 1 ELSE 0 END) AS Codigo_IES,
+    SUM(CASE WHEN Coordenador_Geral_IsF = 'NA' THEN 1 ELSE 0 END) AS Coordenador_Geral_IsF,
+    SUM(CASE WHEN Coordenador_Pedagogico_IsF = 'NA' THEN 1 ELSE 0 END) AS Coordenador_Pedagogico_IsF,
+    SUM(CASE WHEN DOUTORADO_PLENO = 'NA' THEN 1 ELSE 0 END) AS DOUTORADO_PLENO,
+    SUM(CASE WHEN IC = 'NA' THEN 1 ELSE 0 END) AS IC,
+    SUM(CASE WHEN JTA = 'NA' THEN 1 ELSE 0 END) AS JTA,
+    SUM(CASE WHEN JTB = 'NA' THEN 1 ELSE 0 END) AS JTB,
+    SUM(CASE WHEN MESTRADO = 'NA' THEN 1 ELSE 0 END) AS MESTRADO,
+    SUM(CASE WHEN MESTRADO_PROFISSIONAL = 'NA' THEN 1 ELSE 0 END) AS MESTRADO_PROFISSIONAL,
+    SUM(CASE WHEN PESQUISADOR_VISITANTE_ESPECIAL = 'NA' THEN 1 ELSE 0 END) AS PESQUISADOR_VISITANTE_ESPECIAL,
+    SUM(CASE WHEN PROF_VISITANTE_NACIONAL_SENIOR = 'NA' THEN 1 ELSE 0 END) AS PROF_VISITANTE_NACIONAL_SENIOR,
+    SUM(CASE WHEN PROF_VISITANTE_EXTERIOR_PLENO = 'NA' THEN 1 ELSE 0 END) AS PROF_VISITANTE_EXTERIOR_PLENO,
+    SUM(CASE WHEN PROF_VISITANTE_EXTERIOR_SENIOR = 'NA' THEN 1 ELSE 0 END) AS PROF_VISITANTE_EXTERIOR_SENIOR,
+    SUM(CASE WHEN Professor_IsF = 'NA' THEN 1 ELSE 0 END) AS Professor_IsF,
+    SUM(CASE WHEN POS_DOC = 'NA' THEN 1 ELSE 0 END) AS POS_DOC
+FROM capes.3 
+-- De todas essas linhas somente mestrado e doutorado não tiveram NA.
+-- mudnado os NA para 0, dando update 
+UPDATE capes.3 SET CODIGO_IES = '0' WHERE CODIGO_IES = 'NA';
+UPDATE capes.3 SET COORDENADOR_GERAL_ISF = '0' WHERE COORDENADOR_GERAL_ISF = 'NA';
+UPDATE capes.3 SET COORDENADOR_PEDAGOGICO_ISF = '0' WHERE COORDENADOR_PEDAGOGICO_ISF = 'NA';
+UPDATE capes.3 SET IC = '0' WHERE IC = 'NA';
+UPDATE capes.3 SET JTA = '0' WHERE JTA = 'NA';
+UPDATE capes.3 SET JTB = '0' WHERE JTB = 'NA';
+UPDATE capes.3 SET MESTRADO_PROFISSIONAL = '0' WHERE MESTRADO_PROFISSIONAL = 'NA';
+UPDATE capes.3 SET PESQUISADOR_VISITANTE_ESPECIAL = '0' WHERE PESQUISADOR_VISITANTE_ESPECIAL = 'NA';
+UPDATE capes.3 SET PROF_VISITANTE_NACIONAL_SENIOR = '0' WHERE PROF_VISITANTE_NACIONAL_SENIOR = 'NA';
+UPDATE capes.3 SET PROF_VISITANTE_EXTERIOR_PLENO = '0' WHERE PROF_VISITANTE_EXTERIOR_PLENO = 'NA';
+UPDATE capes.3 SET PROF_VISITANTE_EXTERIOR_SENIOR = '0' WHERE PROF_VISITANTE_EXTERIOR_SENIOR = 'NA';
+UPDATE capes.3 SET PROFESSOR_ISF = '0' WHERE PROFESSOR_ISF = 'NA';
+UPDATE capes.3 SET POS_DOC = '0' WHERE POS_DOC = 'NA'
+
+-- Voltando os tipos de str para int 
+ALTER TABLE capes.3
+MODIFY COORDENADOR_GERAL_ISF INT,
+MODIFY COORDENADOR_PEDAGOGICO_ISF INT,
+MODIFY IC INT,
+MODIFY JTA INT,
+MODIFY JTB INT,
+MODIFY MESTRADO_PROFISSIONAL INT,
+MODIFY PESQUISADOR_VISITANTE_ESPECIAL INT,
+MODIFY PROF_VISITANTE_NACIONAL_SENIOR INT,
+MODIFY PROF_VISITANTE_EXTERIOR_PLENO INT,
+MODIFY PROF_VISITANTE_EXTERIOR_SENIOR INT,
+MODIFY PROFESSOR_ISF INT,
+MODIFY POS_DOC INT,
+MODIFY MESTRADO INT,
+MODIFY DOUTORADO_PLENO INT
+
+-- verificando se tudo ocorreu da melhor forma
+desc capes.3 
